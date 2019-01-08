@@ -283,6 +283,15 @@ public class Game {
 		fruits.clear();
 		MyPlayer = null;
 	}
+	
+	public boolean IsInBoxes (Point3D p) {
+		
+		for (int i = 0; i < boxs.size(); i++) {
+			if (boxs.get(i).IsIn(p))
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * @return ArrayList<Packmen>

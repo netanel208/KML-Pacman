@@ -101,7 +101,6 @@ public class MyFrame extends JFrame implements MouseListener,ActionListener,Item
 	{
 		initGUI();
 		this.addMouseListener(this);
-
 	}
 
 	/**
