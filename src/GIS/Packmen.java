@@ -3,6 +3,8 @@ package GIS;
 import java.util.ArrayList;
 
 import Coords.LatLonAlt;
+import Coords.MyCoords;
+import Geom.Point3D;
 
 /**
  * This class represent a gis element with meta data like : speed and radius
@@ -71,6 +73,15 @@ public class Packmen extends element{
 	 */
 	public void setTime(long time) {
 		this.time = time;
+	}
+	
+	public boolean IsInRadius (Point3D p) {
+		MyCoords c = new MyCoords();
+		double des= c.distance3d(p, (Point3D)this.getGeom());
+		if ( des <= this.radius)
+		return true;
+		
+		return false;
 	}
 	/**
 	 * Print the pacman elemnt 

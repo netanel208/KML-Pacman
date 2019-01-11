@@ -8,14 +8,21 @@ public class Rec {
 	Point3D upRightP;
 	Point3D downRightP;
 	Point3D upLeftP;
+	int ID;
 	
 	
+	public int getID() {
+		return ID;
+	}
+
+
 	public Rec(String[] line)
 	{
 		downLeftP = new Point3D(line[2],line[3],"0.0");
 		upRightP = new Point3D(line[5],line[6],"0.0");
 		upLeftP = new Point3D(line[5],line[3],"0.0");
 		downRightP = new Point3D(line[2],line[6],"0.0");
+		ID = Integer.parseInt(line[1]);
 		
 	}
 	

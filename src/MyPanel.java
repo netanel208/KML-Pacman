@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import Algorithm.GraphicGame;
 import Coords.MyCoords;
 import File_format.Map;
 import GIS.Fruit;
@@ -63,7 +64,7 @@ public class MyPanel extends javax.swing.JFrame {
 	MyCoords c = new MyCoords();
 	Game game;
 
-	int goThere = 0;
+	double goThere = 0;
 	Play play1; 
 
 	JPanel p;
@@ -95,12 +96,12 @@ public class MyPanel extends javax.swing.JFrame {
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		setPreferredSize(new java.awt.Dimension(1378, 620));
-		 jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
-	            public void mouseClicked(java.awt.event.MouseEvent evt) {
-	                jPanel1MouseClicked(evt);
-	            }
-	        });
-		
+		jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				jPanel1MouseClicked(evt);
+			}
+		});
+
 		jPanel1.setPreferredSize(new java.awt.Dimension(1368, 556));
 
 		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -212,7 +213,7 @@ public class MyPanel extends javax.swing.JFrame {
 		width = this.getWidth();
 		height = this.getHeight();
 	}// </editor-fold>                        
-	
+
 	private void runItemActionPerformed(java.awt.event.ActionEvent evt) {                                        
 		// TODO add your handling code here:
 		runGame();
@@ -255,7 +256,9 @@ public class MyPanel extends javax.swing.JFrame {
 	}                                    
 
 	private void autoRunItemActionPerformed(java.awt.event.ActionEvent evt) {                                            
-		// TODO add your handling code here:
+		runGameAuto();
+		runTheGameAuto = true;
+
 	}                                           
 
 	private void autoRunItemMouseClicked(java.awt.event.MouseEvent evt) {                                         
@@ -263,7 +266,7 @@ public class MyPanel extends javax.swing.JFrame {
 	}                                           
 
 	private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {                                     
-        // TODO add your handling code here:
+		// TODO add your handling code here:
 		x = evt.getX();
 		y = evt.getY();
 		Point3D pointPixel =new Point3D(x,y,0);
@@ -277,14 +280,16 @@ public class MyPanel extends javax.swing.JFrame {
 
 			play1.setInitLocation(gpsPixel.x(),gpsPixel.y());
 			repaint();
+
+
 		}
 		if(runTheGame)
 		{
 			double azimuth = c.azimuth_elevation_dist((Point3D)game.getMyPlayer().getGeom(), gpsPixel)[0];
-			goThere = (int)azimuth;
+			goThere = azimuth;
 		}
-    }     
-	
+	}     
+
 	private void loadGame() {
 
 		int Width = jPanel1.getWidth();
@@ -326,15 +331,15 @@ public class MyPanel extends javax.swing.JFrame {
 			BoxLabel box = new BoxLabel(Width,Height,_boxs.get(i));
 			boxs.add(box);
 		}
-//		this.paintComponent(jPanel1.getGraphics());
+		//		this.paintComponent(jPanel1.getGraphics());
 		repaint();
 	}
-    
-    public PanelComp getjPanel1() {
+
+	public PanelComp getjPanel1() {
 		return jPanel1;
 	}
-    
-    public void paintComponent(Graphics g)
+
+	public void paintComponent(Graphics g)
 	{
 		width = jPanel1.getWidth(); 
 		height = jPanel1.getHeight();
@@ -344,17 +349,19 @@ public class MyPanel extends javax.swing.JFrame {
 		DrawPackmens(g,width,height);
 		DrawGhosts(g,width,height);
 	}
-    
-    public void DrawMyPlayer(Graphics g, int width, int height) {
-    	if(myPlayerLabel!=null) {
+
+	public void DrawMyPlayer(Graphics g, int width, int height) {
+		if(myPlayerLabel!=null) {
 			myPlayerLabel.update(width, height);
 			int x_player= (int)(((double)width)*((double)myPlayerLabel.x_factor));
 			int y_player= (int)(((double)height)*((double)myPlayerLabel.y_factor));
-			g.drawImage(playerIcon,x_player, y_player, 45, 45,jPanel1);
+			//			g.drawImage(playerIcon,x_player, y_player, 45, 45,jPanel1);
+			g.setColor(Color.PINK);
+			g.fillOval(x_player, y_player, 35, 35);
 		}
-    }
-    
-    public void DrawBoxs(Graphics g, int width, int height) {
+	}
+
+	public void DrawBoxs(Graphics g, int width, int height) {
 		if(!boxs.isEmpty())
 		{
 			for(int i=0 ; i<boxs.size() ; i++)
@@ -362,9 +369,9 @@ public class MyPanel extends javax.swing.JFrame {
 				BoxLabel box = boxs.get(i);
 				int x_box = box.getX();
 				int y_box = box.getY();
+				box.update(width, height);
 				x_box = (int)(((double)width)*((double)box.x_factor));
 				y_box = (int)(((double)height)*((double)box.y_factor));
-				box.update(width, height);
 				box.setLocation(x_box, y_box);
 				g.setColor(Color.BLACK);
 				g.fillRect(x_box, y_box, box.x_dis, box.y_dis);
@@ -393,7 +400,7 @@ public class MyPanel extends javax.swing.JFrame {
 			}
 		}
 	}
-	
+
 	public void DrawPackmens(Graphics g, int width, int height) {
 		if(!pacmansLabels.isEmpty())
 		{
@@ -414,7 +421,7 @@ public class MyPanel extends javax.swing.JFrame {
 			}
 		}
 	}
-	
+
 	public void DrawGhosts(Graphics g, int width, int height) {
 		if(!ghostLabels.isEmpty())
 		{
@@ -431,7 +438,7 @@ public class MyPanel extends javax.swing.JFrame {
 			}
 		}
 	}
-	
+
 	public void runGame() {
 		runTheGame = true;
 		Thread th = new Thread(new Runnable() {
@@ -457,6 +464,90 @@ public class MyPanel extends javax.swing.JFrame {
 		});
 		th.start();
 	}
+
+
+
+	public void runGameAuto () {
+		GraphicGame alg = new GraphicGame(game);
+	//	alg.startingPoint()
+	//	Point3D p = (Point3D) game.getPackmens().get(2).getGeom();
+		Point3D pointPixel =new Point3D(600,30,0);
+		Point3D gpsPoint = m.toGPS(pointPixel);
+		// פה צריך לעשות עוד אלגוריתם שיחשב מאיפה להתחיל, כרגע מתחיל בנק אקראית 150
+		myPlayerLabel= new MyPlayerLabel(jPanel1.getWidth(), jPanel1.getHeight(),gpsPoint.x(),gpsPoint.y());
+		myplayer_addable= false;
+		play1.setIDs(315858340,208252684);
+
+		play1.setInitLocation(gpsPoint.x(),gpsPoint.y());
+
+		repaint();
+
+		////////////////
+
+		///////////
+		Thread th = new Thread(new Runnable() {
+			public void run() {
+
+				//		System.out.println(alg.toString());
+				//		System.out.println("after");
+				ArrayList<Point3D> path =alg.update(game);
+				Point3D target = path.get(0);
+				double azimuth = c.azimuth_elevation_dist((Point3D)game.getMyPlayer().getGeom(), target)[0];
+				goThere = azimuth;
+
+
+				play1.start();
+				ArrayList<String> board_data;
+				int lastKill=0;
+				int count=0;
+				while(play1.isRuning()) {
+					play1.rotate(goThere);
+					board_data = play1.getBoard();		
+					game.update(board_data);
+					System.out.println(play1.getStatistics());
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					repaint();
+
+				String[] stati = play1.getStatistics().split(",");
+					String x = stati[4];
+					int ch = x.indexOf(':');
+					String sr = x.substring(ch+1);
+					System.out.println("&&&&&&&&&&substring"+sr);
+					int kill = Integer.parseInt(sr);
+					
+					if(game.IsCloseGhots() && kill ==0) {
+						goThere =alg.runAway(goThere, azimuth);
+						play1.rotate(goThere);
+						
+
+					}
+					else {
+					path =alg.update(game);
+					target = path.get(0);
+					azimuth = c.azimuth_elevation_dist((Point3D)game.getMyPlayer().getGeom(), target)[0];
+					goThere = azimuth;
+					}
+				}
+
+
+			}
+
+		});
+		th.start();
+
+
+
+	}
+
+
+
+
+
 	/**
 	 * @param args the command line arguments
 	 */

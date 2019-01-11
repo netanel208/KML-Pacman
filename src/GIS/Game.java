@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import Coords.MyCoords;
 import File_format.CsvArrayList;
 import Geom.Point3D;
 import Robot.Packman;
@@ -47,8 +48,7 @@ public class Game {
 		for (int i = 0; i < fruits.size() ; i++) {
 			idFruits.add(fruits.get(i).getId());
 		}
-		//		String []  str= {"M","0","0.0","0.0","0.0","20.0","1.0"};
-		//		MyPlayer= new Packmen(str);
+
 
 	}
 
@@ -156,7 +156,66 @@ public class Game {
 	}
 
 
-	public ArrayList<Integer>[] update(ArrayList<String> board_data) { // 1 2 3 6 8 9 <- Idpackmens
+
+	public void update (ArrayList<String> board_data) {
+		ArrayList<Integer> idFruits_u = new ArrayList<Integer>();
+		ArrayList<Integer> idPacmans_u = new ArrayList<Integer>();
+		ArrayList<Point3D> PointPacmans_u = new ArrayList<Point3D>();
+
+		int ghostIn =0 ;
+		int pacIn=0;
+		for (int i = 0; i <board_data.size(); i++) {
+			String line = board_data.get(i);
+			System.out.println(line);
+			String[] array = line.split(",");
+			Point3D newPoint  = new Point3D(array[2],array[3],array[4]);
+			if (array[0].equals("M")) {
+				MyPlayer.setGeom(newPoint);
+			}			
+			if(array[0].equals("G"))
+			{
+				ghosts.get(ghostIn).setGeom(newPoint);
+				ghostIn++;
+			}
+			if ( array[0].equals("F")) {
+				idFruits_u.add(Integer.parseInt(array[1]));
+			}
+			if ( array[0].equals("P")) {
+				idPacmans_u.add(Integer.parseInt(array[1]));
+				PointPacmans_u.add(newPoint);
+				pacIn++;
+			}
+
+		}
+
+		for (int j = 0; j < idFruits.size(); j++) {
+
+			if (!idFruits_u.contains(idFruits.get(j))) {
+
+				fruits.get(j).delete();
+				fruits.remove(j);
+				idFruits.remove(j);
+			}
+		}
+
+		for (int i = 0; i < idPackmens.size(); i++) {
+			if (idPacmans_u.contains(idPackmens.get(i))) {
+				packmens.get(i).setGeom(PointPacmans_u.get(i));
+
+
+			}
+
+			else {
+				packmens.get(i).delete();
+				packmens.remove(i);
+				idPackmens.remove(i);
+			}
+
+		}
+
+	}
+
+	public ArrayList<Integer>[] rr(ArrayList<String> board_data) { // 1 2 3 6 8 9 <- Idpackmens
 		ArrayList<Integer> idPacmans_u = new ArrayList<Integer>();
 		ArrayList<Integer> idFruits_u = new ArrayList<Integer>();
 
@@ -188,7 +247,6 @@ public class Game {
 				}
 				pacIn++;
 			}
-			System.out.println(Thread.currentThread());
 			synchronized(this) {
 				if(array[0].equals("F"))
 				{
@@ -283,12 +341,21 @@ public class Game {
 		fruits.clear();
 		MyPlayer = null;
 	}
-	
+
 	public boolean IsInBoxes (Point3D p) {
-		
+
 		for (int i = 0; i < boxs.size(); i++) {
 			if (boxs.get(i).IsIn(p))
-			return true;
+				return true;
+		}
+		return false;
+	}
+
+	public boolean IsCloseGhots() {
+		MyCoords c = new MyCoords();
+		for (int i = 0; i < ghosts.size(); i++) {
+			if ( c.distance3d((Point3D)ghosts.get(i).getGeom(), (Point3D)MyPlayer.getGeom()) <= 20 )
+				return true;
 		}
 		return false;
 	}

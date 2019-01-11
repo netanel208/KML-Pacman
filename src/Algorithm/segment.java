@@ -15,6 +15,11 @@ public class segment   {
 	
 	ArrayList<Rec> boxs;
 	ArrayList<Line2D> lines;
+	final Line2D upFrame = new Line2D.Double(32.105728,35.212416,32.105728,35.202369);
+	final Line2D downFrame = new Line2D.Double(32.10189,35.20237,32.10189,35.212416);
+	final Line2D leftFrame = new Line2D.Double(32.105728,35.202369,32.10189,35.20237);
+	final Line2D rightFrame = new Line2D.Double(32.105728,35.212416,32.10189,35.212416);
+
 	
 	/**
 	 * This constructor get list of boxes and create from any box 4 lines 
@@ -43,8 +48,12 @@ public class segment   {
 			Line2D lineRight = new Line2D.Double(boxs.get(i).getUpRightP().x(),  boxs.get(i).getUpRightP().y(),  
 					boxs.get(i).getDownRightP().x(),  boxs.get(i).getDownRightP().y());
 			lines.add(lineRight);
-
+			
 		}
+		lines.add(upFrame);
+		lines.add(downFrame);
+		lines.add(leftFrame);
+		lines.add(rightFrame);
 	}
 	
 	/**
