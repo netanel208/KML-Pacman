@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
-import Algoritim.segment;
+import Algorithm.segment;
 import GIS.Rec;
 import Geom.Point3D;
 
@@ -37,7 +37,7 @@ class SegmentTest {
 		segment s = new segment(boxs);
 		Point3D p  = new Point3D(32.10387,35.20660);
 		Point3D p1  = new Point3D(32.10310,35.20828);
-		assertTrue(s.Intersect(p, p1));
+		assertFalse(!s.Intersect(p, p1));
 
 		Point3D p2  = new Point3D(32.10305,35.20351);
 		Point3D p3  = new Point3D(32.10457,35.20352);

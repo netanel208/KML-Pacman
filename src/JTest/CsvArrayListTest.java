@@ -10,14 +10,14 @@ import File_format.CsvArrayList;
 
 class CsvArrayListTest {
 	
-	CsvArrayList array = new CsvArrayList("test\\1.csv");
+	CsvArrayList array = new CsvArrayList("data\\Ex4_OOP_example1.csv");
 
 
 	@Test
 	void sizeOfArrayList() {
 		
 		ArrayList<String[]> temp = array.getLines();
-		int excepted = 95;
+		int excepted = 22;
 		assertEquals(excepted,temp.size());
 	}
 	@Test

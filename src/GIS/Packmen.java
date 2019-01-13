@@ -75,6 +75,11 @@ public class Packmen extends element{
 		this.time = time;
 	}
 	
+	/**
+	 * 
+	 * @param p - some Point3D
+	 * @return true - if p is in the radius
+	 */
 	public boolean IsInRadius (Point3D p) {
 		MyCoords c = new MyCoords();
 		double des= c.distance3d(p, (Point3D)this.getGeom());

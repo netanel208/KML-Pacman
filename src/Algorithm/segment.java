@@ -7,9 +7,12 @@ import GIS.Rec;
 import Geom.Point3D;
 
 /**
- * 
+ * This class holds within it an array of boxes and lines.
+ * The constructor of the class takes an array of boxes and each box will make four lines - up, right, down and left.
+ * In this class there is one function named Intersect which receive two points
+ * (representing a line) and check whether the resulting line is cut by one of the lines in the class.
  * @author Carmel
- *@author Netanel
+ * @author Netanel
  */
 public class segment   {
 	
@@ -30,7 +33,7 @@ public class segment   {
 		this.boxs = boxs;
 		
 		 lines = new ArrayList<Line2D> ();
-		 // loop over the boxes and create lines
+		 // loop over the boxes and add the lines to the array
 		for (int i = 0; i < boxs.size(); i++) {
 			
 			Line2D lineUp = new Line2D.Double(boxs.get(i).getUpLeftP().x(),  boxs.get(i).getUpLeftP().y(),  
@@ -50,6 +53,8 @@ public class segment   {
 			lines.add(lineRight);
 			
 		}
+		
+		// add the frame to the line list
 		lines.add(upFrame);
 		lines.add(downFrame);
 		lines.add(leftFrame);
@@ -57,10 +62,11 @@ public class segment   {
 	}
 	
 	/**
-	 * 
-	 * @param a
-	 * @param b
-	 * @return
+	 * This method receive two points (representing a line) and check whether
+	 *  the resulting line is cut by one of the lines in the class.
+	 * @param a point
+	 * @param b point 
+	 * @return true if the  line is cut by one of the lines in the class.
 	 */
 	public boolean Intersect (Point3D a,Point3D b) {
 		double x_a = a.x();

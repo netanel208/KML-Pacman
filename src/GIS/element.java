@@ -51,7 +51,9 @@ public class element implements GIS_element {
 		isEaten= false;
 	}
 	
-	
+	/**
+	 * If this object is deleted (ie eaten)
+	 */
 	public void delete () {
 		isEaten=true;
 	}
@@ -91,6 +93,10 @@ public class element implements GIS_element {
 		return id;
 	}
 
+	/**
+	 * 
+	 * @return boolean isEaten - if this object eaten
+	 */
 	public boolean isEaten() {
 		return isEaten;
 	}

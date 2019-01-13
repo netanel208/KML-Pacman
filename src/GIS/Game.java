@@ -48,75 +48,6 @@ public class Game {
 		for (int i = 0; i < fruits.size() ; i++) {
 			idFruits.add(fruits.get(i).getId());
 		}
-
-
-	}
-
-
-	/**
-	 * This constructor accept collections of pacmans and fruits and convert its to csv file(output.csv)
-	 * @param packmens
-	 * @param fruits
-	 */
-	public Game(ArrayList<Packmen> packmens, ArrayList<Fruit> fruits, ArrayList<Packmen> ghosts)
-	{
-		this.packmens = packmens;
-		this.fruits = 	fruits;	
-		this.ghosts = ghosts;
-
-		//create arraylist of ids of elements
-		idPackmens = new ArrayList<Integer>();
-		idFruits = new ArrayList<Integer>();
-		for (int i = 0; i < packmens.size() ; i++) {
-			idPackmens.add(packmens.get(i).getId());
-		}
-		for (int i = 0; i < fruits.size() ; i++) {
-			idFruits.add(fruits.get(i).getId());
-		}
-
-		String []  str= {"M","0","0.0","0.0","0.0","20.0","1.0"};
-		MyPlayer= new Packmen(str);
-
-		createCsv();
-
-	}
-
-
-	/**
-	 * This method create csv file from this fruits and pacmans collections.
-	 */
-	public void createCsv()
-	{
-		String fileName = "output.csv";
-		PrintWriter pw = null;
-		try 
-		{
-			pw = new PrintWriter(new File(fileName));//create new file with name: "output.csv"
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-			return;
-		}
-		StringBuilder sb = new StringBuilder();
-
-		//the first line in csv file(titels)
-		sb.append("Type,id,Lat,Lon,Alt,Speed/Weight,Radius,"+packmens.size()+","+fruits.size()+"\n");
-
-		//after write titels write the pacmans details
-		for(int i=0 ; i<packmens.size() ; i++)
-		{
-			sb.append(packmens.get(i).toString()+"\n");
-		}
-
-		//after write pacmans details write the fruits details
-		for(int i=0 ; i<fruits.size() ; i++)
-		{
-			sb.append(fruits.get(i).toString()+"\n");
-		}
-
-		pw.write(sb.toString());
-		pw.close();
 	}
 
 	/**
@@ -155,8 +86,10 @@ public class Game {
 		}
 	}
 
-
-
+	/**
+	 * This method accepts the new game data and updates them in this game
+	 * @param board_data - ArrayList<String>
+	 */
 	public void update (ArrayList<String> board_data) {
 		ArrayList<Integer> idFruits_u = new ArrayList<Integer>();
 		ArrayList<Integer> idPacmans_u = new ArrayList<Integer>();
@@ -185,13 +118,11 @@ public class Game {
 				PointPacmans_u.add(newPoint);
 				pacIn++;
 			}
-
 		}
 
 		for (int j = 0; j < idFruits.size(); j++) {
 
 			if (!idFruits_u.contains(idFruits.get(j))) {
-
 				fruits.get(j).delete();
 				fruits.remove(j);
 				idFruits.remove(j);
@@ -201,139 +132,18 @@ public class Game {
 		for (int i = 0; i < idPackmens.size(); i++) {
 			if (idPacmans_u.contains(idPackmens.get(i))) {
 				packmens.get(i).setGeom(PointPacmans_u.get(i));
-
-
 			}
-
 			else {
 				packmens.get(i).delete();
 				packmens.remove(i);
 				idPackmens.remove(i);
 			}
-
 		}
-
 	}
 
-	public ArrayList<Integer>[] rr(ArrayList<String> board_data) { // 1 2 3 6 8 9 <- Idpackmens
-		ArrayList<Integer> idPacmans_u = new ArrayList<Integer>();
-		ArrayList<Integer> idFruits_u = new ArrayList<Integer>();
-
-		int pacIn = 0;// +1
-		int fruIn = 0;//
-		int ghostIn = 0;
-		int numBox = 0;
-		for(int i=0;i<board_data.size();) {
-			String line = board_data.get(i);
-			System.out.println(line);
-			String[] array = line.split(",");
-			Point3D newPoint  = new Point3D(array[2],array[3],array[4]);
-			int ID = Integer.parseInt(array[1]);
-			if (array[0].equals("M")) {
-				MyPlayer.setGeom(newPoint);
-				i++;
-			}
-
-			if (array[0].equals("P")) {//1 3 4 6 7 8 9 10 11 (game packmens)
-				//1 3 4 6 8 9 11   (get board packmens)	
-				if(ID == idPackmens.get(pacIn))
-				{
-					idPacmans_u.add(ID);//1 3 4 6 -1 8 9 -1 11
-					packmens.get(pacIn).setGeom(newPoint);
-					i++;
-				}
-				else {
-					idPacmans_u.add(-1);
-				}
-				pacIn++;
-			}
-			synchronized(this) {
-				if(array[0].equals("F"))
-				{
-					synchronized(this) {
-						if(ID == idFruits.get(fruIn))
-						{
-							idFruits_u.add(ID);
-							i++;
-						}
-						else {
-							idFruits_u.add(-1);
-						}
-						fruIn++;
-					}
-				}
-			}
-			if(array[0].equals("G"))
-			{
-				ghosts.get(ghostIn).setGeom(newPoint);
-				ghostIn++;
-				i++;
-			}
-			if(array[0].equals("B"))////////
-			{
-				numBox++;
-				i++;
-			}
-		}//1 2 -1 4 5 7 
-
-		for (int i = 0; i < idPacmans_u.size(); i++) {
-			if(idPacmans_u.get(i) == -1)
-			{
-				packmens.get(i).delete();
-				packmens.remove(i);
-				idPackmens.remove(i);
-			}
-		}
-		for (int i = 0; i < idFruits_u.size(); i++) {
-			if(idFruits_u.get(i) == -1)
-			{
-				fruits.get(i).delete();
-				//				System.out.println("delete fruit:"+fruits.get(i));
-				fruits.remove(i);
-				idFruits.remove(i);
-			}
-		}
-
-		//check the end of board
-		int sizeTotal = 1 + fruits.size() + packmens.size() + ghosts.size() + numBox;////
-		if(sizeTotal != board_data.size() && board_data.size() > 0)
-		{
-			String line = board_data.get(board_data.size()-1);
-			String[] array = line.split(",");
-			int ID = Integer.parseInt(array[1]);
-			if(fruits.size() > 0)
-			{
-				if(fruits.get(fruits.size()-1).getId() != ID)
-				{
-					fruits.get(fruits.size()-1).delete();
-					//					System.out.println("delete fruit:"+fruits.get(fruits.size()-1));
-					fruits.remove(fruits.size()-1);
-					idFruits.remove(idFruits.size()-1);
-				}
-			}
-			else if(packmens.size() > 0)
-			{
-				if(packmens.get(packmens.size()-1).getId() != ID)
-				{
-					packmens.get(packmens.size()-1).delete();
-					packmens.remove(packmens.size()-1);
-					idPackmens.remove(packmens.size()-1);
-				}
-			}
-		}
-
-
-		ArrayList<Integer>[] ans = new ArrayList[2];
-		//		System.out.println(idFruits_u.toString());
-		//		System.out.println(idPacmans_u.toString());
-		//		System.out.println(idFruits.toString());
-		//		System.out.println(idPackmens.toString());
-		ans[0]= idFruits_u;
-		ans [1] = idPacmans_u;
-		return ans;
-	}
-
-
+	/**
+	 * Clear this game
+	 */
 	public void clear() { 
 
 		packmens.clear();
@@ -342,6 +152,10 @@ public class Game {
 		MyPlayer = null;
 	}
 
+	/**
+	 * @param p - Point3D
+	 * @return true - if the point is inside some boxs
+	 */
 	public boolean IsInBoxes (Point3D p) {
 
 		for (int i = 0; i < boxs.size(); i++) {
@@ -351,10 +165,13 @@ public class Game {
 		return false;
 	}
 
+	/**
+	 * @return true - if MyPlayer close to ghost, in specific radius
+	 */
 	public boolean IsCloseGhots() {
 		MyCoords c = new MyCoords();
 		for (int i = 0; i < ghosts.size(); i++) {
-			if ( c.distance3d((Point3D)ghosts.get(i).getGeom(), (Point3D)MyPlayer.getGeom()) <= 20 )
+			if ( c.distance3d((Point3D)ghosts.get(i).getGeom(), (Point3D)MyPlayer.getGeom()) <= 30)
 				return true;
 		}
 		return false;
@@ -374,6 +191,9 @@ public class Game {
 		return ghosts;
 	}
 
+	/**
+	 * @return MyPlayer
+	 */
 	public Packmen getMyPlayer() {
 		return MyPlayer;
 	}
